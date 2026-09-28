@@ -1,149 +1,22 @@
-import { listen } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/core";
-import { getCurrentWindow } from "@tauri-apps/api/window";
-import { currentLang, applyStatic, initLang } from "./i18n";
-
-interface Settings {
-  work_minutes: number;
-  break_minutes: number;
-  sound: boolean;
-  show_widget: boolean;
-  autostart: boolean;
-  idle_reset: boolean;
-  language: string;
-  widget_size: number;
-  tips: string[];
-}
-
-const workMin = document.getElementById("workMin") as HTMLInputElement;
-const breakMin = document.getElementById("breakMin") as HTMLInputElement;
-const widgetSize = document.getElementById("widgetSize") as HTMLInputElement;
-const tipsList = document.getElementById("tipsList") as HTMLTextAreaElement;
-const langBtn = document.getElementById("langBtn") as HTMLButtonElement;
-const langLabel = document.getElementById("langLabel")!;
-const langMenu = document.getElementById("langMenu") as HTMLElement;
-const langOpts = [...langMenu.querySelectorAll<HTMLButtonElement>(".selopt")];
-const btnSave = document.getElementById("btnSave") as HTMLButtonElement;
-const toast = document.getElementById("toast")!;
-
-const switches = {
-  sound: document.getElementById("swSound")!,
-  show_widget: document.getElementById("swWidget")!,
-  autostart: document.getElementById("swAuto")!,
-  idle_reset: document.getElementById("swIdleReset")!,
-} as Record<string, HTMLElement>;
-
-function setSwitch(key: string, on: boolean) {
-  switches[key].classList.toggle("on", on);
-}
-
-// ---- 自定义语言下拉框 ----
-let langValue = "system";
-
-function setLang(value: string) {
-  langValue = value;
-  const opt = langOpts.find((o) => o.dataset.value === value);
-  langLabel.textContent = opt?.textContent ?? value;
-  langOpts.forEach((o) => o.classList.toggle("active", o === opt));
-}
-
-function closeLangMenu() {
-  langMenu.hidden = true;
-  langBtn.classList.remove("open");
-}
-
-langBtn.addEventListener("click", (e) => {
-  e.stopPropagation();
-  const open = langMenu.hidden === true;
-  langMenu.hidden = !open;
-  langBtn.classList.toggle("open", open);
-});
-langOpts.forEach((o) =>
-  o.addEventListener("click", () => {
-    setLang(o.dataset.value!);
-    closeLangMenu();
-  })
-);
-document.addEventListener("click", closeLangMenu);
-
-async function load() {
+import { listen } from "@tauri-apps/api/event";
+import { action, element, watch, type Settings } from "./shared";
+async function refresh() {
   const s = await invoke<Settings>("get_settings");
-  workMin.value = String(s.work_minutes);
-  breakMin.value = String(s.break_minutes);
-  widgetSize.value = String(Math.min(140, Math.max(40, s.widget_size)));
-  tipsList.value = s.tips.join("\n");
-  setLang(["zh", "en"].includes(s.language) ? s.language : "system");
-  setSwitch("sound", s.sound);
-  setSwitch("show_widget", s.show_widget);
-  setSwitch("autostart", s.autostart);
-  setSwitch("idle_reset", s.idle_reset);
+  element<HTMLInputElement>("work").value = String(s.work_minutes);
+  element<HTMLInputElement>("rest").value = String(s.break_minutes);
+  element<HTMLInputElement>("sound").checked = s.sound;
+  element<HTMLInputElement>("autostart").checked = s.autostart;
+  element("message").textContent = ""; element("error").textContent = "";
 }
-
-function current(): Settings {
-  return {
-    work_minutes: Math.min(240, Math.max(1, Number(workMin.value) || 45)),
-    break_minutes: Math.min(60, Math.max(1, Number(breakMin.value) || 5)),
-    widget_size: Math.min(140, Math.max(40, Number(widgetSize.value) || 64)),
-    sound: switches.sound.classList.contains("on"),
-    show_widget: switches.show_widget.classList.contains("on"),
-    autostart: switches.autostart.classList.contains("on"),
-    idle_reset: switches.idle_reset.classList.contains("on"),
-    language: langValue,
-    tips: tipsList.value
-      .split("\n")
-      .map((t) => t.trim())
-      .filter(Boolean),
-  };
-}
-
-for (const el of Object.values(switches)) {
-  el.addEventListener("click", () => el.classList.toggle("on"));
-}
-
-btnSave.addEventListener("click", async () => {
-  btnSave.disabled = true;
-  try {
-    await invoke("save_settings", { settings: current() });
-    await load(); // 语言切换后文案与默认小字可能已变，重新加载
-    applyStatic(await currentLang()); // 保存后立即刷新本页文案
-    toast.classList.add("show");
-    setTimeout(() => {
-      toast.classList.remove("show");
-      invoke("hide_settings");
-    }, 600);
-  } finally {
-    btnSave.disabled = false;
-  }
-});
-
-document.getElementById("btnClose")!.addEventListener("click", () => invoke("hide_settings"));
-window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    if (!langMenu.hidden) {
-      closeLangMenu();
-      return;
-    }
-    invoke("hide_settings");
-  }
-});
-window.addEventListener("contextmenu", (e) => e.preventDefault());
-
-// 整个窗口都可拖动（输入框、按钮、开关、下拉框除外）
-const win = getCurrentWindow();
-document.addEventListener("mousedown", (e) => {
-  if (e.button !== 0) return;
-  const t = e.target as HTMLElement;
-  if (t.closest("button, input, textarea, select, .switch, .selwrap")) return;
+element<HTMLFormElement>("form").onsubmit = async e => {
   e.preventDefault();
-  win.startDragging();
-});
-
-await load();
-listen("settings_open", async () => {
-  await load();
-  applyStatic(await currentLang());
-});
-
-// 语言初始化：静态文案 + 语言下拉框
-await initLang();
-setLang(langValue); // 文案语言可能已变，同步选中项的显示文本
+  const settings: Settings = { work_minutes: Number(element<HTMLInputElement>("work").value), break_minutes: Number(element<HTMLInputElement>("rest").value), sound: element<HTMLInputElement>("sound").checked, autostart: element<HTMLInputElement>("autostart").checked };
+  if (await action("save_settings", { settings })) element("message").textContent = "保存しました。";
+};
+async function init() {
+  await listen("settings_open", () => { void refresh().catch(e => { element("error").textContent = String(e); }); });
+  await refresh();
+  await watch(t => { element<HTMLFieldSetElement>("fields").disabled = t.mode === "break"; });
+}
+init().catch(e => { element("error").textContent = String(e); });

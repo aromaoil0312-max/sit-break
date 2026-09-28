@@ -18,7 +18,7 @@ export default defineConfig(() => ({
   build: {
     rollupOptions: {
       input: {
-        widget: resolve(root, "widget.html"),
+        notice: resolve(root, "notice.html"),
         reminder: resolve(root, "reminder.html"),
         settings: resolve(root, "settings.html"),
         panel: resolve(root, "panel.html"),
