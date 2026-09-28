@@ -1,14 +1,31 @@
 # テスト結果・残作業
 
-検証日: 2026-09-26（日本時間）／GitHub反映状況更新: 2026-09-29（日本時間）
-状態: **実装済みの開発版。配布用exe未生成、Windows実機未検証。完成条件は未達。**
+検証日: 2026-09-26／2026-09-29（日本時間）
+状態: **Windows x64 exe・NSIS生成済み。Windows上15テスト成功。Windows 10/11実機での受け入れ確認は未実施。**
 
 ## 実行環境
 
 Ubuntu 24.04 x64 / Rust 1.98.1 / TypeScript 6 / Vite 8.2.2。
-対象: Windows 10/11 x64。今回Windows実機、Windows runnerは利用できていません。
+対象: Windows 10/11 x64。9月29日はGitHub ActionsのWindows Server 2025 runner（windows-2025-vs2026）でネイティブビルドを実施しました。Windows 10/11実機のデスクトップ操作は未確認です。
 
-## 実行した検証
+## Windowsネイティブビルド（9月29日）
+
+[成功した実行](https://github.com/aromaoil0312-max/sit-break/actions/runs/36485516520)
+
+- ソースコミット: `825433b93d1bb86d60d9f4d6ab9512eb51707dd2`
+- `npm ci`、TypeScript/Vite本番ビルド、`cargo test --locked` 成功（15件）。
+- 12件のタイマー検証に加えて、初期設定・入力検証、短縮時間設定、Windowsレジストリ自動起動の登録／削除を確認。
+- Tauri Windows x64 releaseビルド、NSIS生成、Artifactsアップロードが成功。
+- 本体exe: 4,230,144 bytes、PE machine `0x8664`（x64）。
+- 本体SHA-256: `3f32aec8439d9e7e218ac769971f36587e4c5385e66caf199002b752a71c9ec9`
+- NSIS: 1,340,244 bytes。NSISの起動部分はx86形式で、同梱アプリは上記x64です。
+- NSIS SHA-256: `7746a289d5a20e2195a5c3747622db0616fee3023410adf83f7685174031798d`
+- 元ArtifactsのZIP SHA-256とGitHub提供digestの一致、ZIP CRC、LICENSE・NOTICE同梱を確認。
+- ログ抜粋: [windows-native-build.txt](evidence/windows-native-build.txt)。
+
+pushとPRのイベントで2実行が起動しました。追加の再ビルドは行わず、後続の文書更新には `[skip ci]` を付けています。配布ZIPは生成済みバイナリを変更せず、説明書とフォルダー構成を整えたものです。
+
+## 先行するLinux環境での検証（9月26日）
 
 | 項目 | 回数 | 結果 |
 |---|---:|---|
@@ -37,7 +54,7 @@ Windows型チェックには `GNU compiler is not supported for this target` の
 | 9 長時間動作 | 不規則な137ms刻み、1000サイクルの仮想時刻で検査 | 実時間での長時間起動は未確認 |
 
 追加確認: 休憩中のpause/reset/configure拒否、ロック時の解除取り消し、遅延しても未表示の休憩を飛ばさないこと、通知音だけの変更で時間をリセットしない設計。
-Windowsレジストリ自動起動の単体テストもコードに含めていますが、今回は未実行です。
+Windowsレジストリ自動起動の単体テストは、9月29日のWindows runnerで成功しました。
 
 ## UI確認の状態
 
@@ -72,11 +89,11 @@ Playwright: browser executable unavailable; browser download returned an invalid
 
 ## 完成までに必要な作業
 
-1. Windows Actionsで`cargo test`・exe/NSIS生成を実施（forkへの反映とPR作成は完了）。
+1. Windows Actionsのテスト・exe/NSIS生成、forkへの反映、PR作成は完了。
 2. 上表9ケースをWindows 10/11で受け入れ確認。日本語、音、最前面、×、Alt＋F4、ロック・スリープ復帰、設定保存を確認。
 3. 未設定環境で初期値120分／5分、短縮モードが本番で無効、再起動・自動起動と二重起動を確認。
 4. 高DPI・複数モニターで緊急解除ボタンが画面内に収まり、通知終了後に作業へ戻れることを確認。
-5. ポータブルzipへexe・LICENSE・NOTICE・READMEを同梱し、SHA-256を付けて配布。
+5. 配布ZIPへexe・インストーラー・LICENSE・NOTICE・README・テスト結果・ビルド手順・SHA-256を同梱済み。
 
 ## GitHubの状態
 
@@ -86,5 +103,5 @@ Playwright: browser executable unavailable; browser download returned an invalid
 - Draft PR: https://github.com/aromaoil0312-max/sit-break/pull/1
 - GitHub側の2つのtree SHAがローカルコミットと一致することを確認済み。
 
-pushとPR作成後のActions実行一覧は0件でした。接続ツールはワークフロー有効化・手動実行に対応していないため、設定状態は確認できていません。Actions画面でforkのワークフロー有効化が必要か確認してください。手順は[ビルド方法](BUILD.md)に記載しています。
+利用者がActionsを有効化した後、featureブランチに起動用コミットを追加し、Windowsビルドの成功を確認しました。
 mainへの直接変更、マージ、リリース公開は行っていません。

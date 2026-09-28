@@ -1,0 +1,29 @@
+2026-09-28T21:21:18.5198940Z Version: 20260828.587
+2026-09-28T21:21:18.5204068Z Microsoft Windows Server 2025
+2026-09-28T21:21:18.5207425Z Image: windows-2025-vs2026
+2026-09-28T21:21:18.5208000Z Version: 20260922.246.2
+2026-09-28T21:24:58.6180059Z running 15 tests
+2026-09-28T21:24:58.6187281Z test tests::debug_durations_are_explicit ... ok
+2026-09-28T21:24:58.6188240Z test tests::defaults_and_validation ... ok
+2026-09-28T21:24:58.6189932Z test timer::tests::break_has_no_pause_reset_or_settings_bypass ... ok
+2026-09-28T21:24:58.6191415Z test timer::tests::delayed_worker_never_skips_an_unseen_break ... ok
+2026-09-28T21:24:58.6193032Z test tests::quoted_autostart_registry_roundtrip ... ok
+2026-09-28T21:24:58.6194677Z test timer::tests::eighty_minutes_then_one_hour_locked_leaves_forty ... ok
+2026-09-28T21:24:58.6195855Z test timer::tests::emergency_requires_thirty_seconds_and_confirmation ... ok
+2026-09-28T21:24:58.6197995Z test timer::tests::lock_cancels_emergency_and_preserves_break ... ok
+2026-09-28T21:24:58.6199230Z test timer::tests::one_minute_cycle_is_automatic ... ok
+2026-09-28T21:24:58.6200069Z test timer::tests::long_running_cycles_and_cancel ... ok
+2026-09-28T21:24:58.6202696Z test timer::tests::pause_resume_preserves_fractional_time ... ok
+2026-09-28T21:24:58.6204425Z test timer::tests::production_defaults_cycle ... ok
+2026-09-28T21:24:58.6205541Z test timer::tests::reset_resumes_but_sound_only_changes_do_not_reset ... ok
+2026-09-28T21:24:58.6206154Z test timer::tests::sleep_does_not_advance_awake_clock ... ok
+2026-09-28T21:24:58.6208709Z test timer::tests::irregular_ticks_do_not_accumulate_drift ... ok
+2026-09-28T21:24:58.6209637Z test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-09-28T21:24:58.6363533Z running 0 tests
+2026-09-28T21:24:58.6364656Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-09-28T21:24:59.5397952Z running 0 tests
+2026-09-28T21:24:59.5400365Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+2026-09-28T21:31:01.7786457Z        Built application at: D:\a\sit-break\sit-break\src-tauri\target\x86_64-pc-windows-msvc\release\sit-break.exe
+2026-09-28T21:31:02.5796733Z      Running makensis to produce D:\a\sit-break\sit-break\src-tauri\target\x86_64-pc-windows-msvc\release\bundle\nsis\Sit Break 120-5_0.2.2_x64-setup.exe
+2026-09-28T21:31:05.0580383Z         D:\a\sit-break\sit-break\src-tauri\target\x86_64-pc-windows-msvc\release\bundle\nsis\Sit Break 120-5_0.2.2_x64-setup.exe
+src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*-setup.exe

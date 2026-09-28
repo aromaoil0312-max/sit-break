@@ -3,7 +3,7 @@
 Windows 10 / 11 x64向けの、日本語・ローカル動作の座りっぱなし防止タイマーです。
 [yuexiaoliang/sit-break](https://github.com/yuexiaoliang/sit-break) v0.2.2をもとに、用途を絞って改造しています。
 
-> 開発版です。タイマー単体の自動テスト、フロントエンドのビルド、Windows向けRust型チェックは通過していますが、Windows実機での受け入れ確認は未実施です。今回の環境ではMicrosoft CRT/SDKの取得に失敗したため、実行用exeは未生成です。詳しくは [テスト結果](docs/TEST-RESULTS.md) を参照してください。
+> Windows x64のexe・日本語NSISインストーラーを生成済みです。Windows runner上の15件の自動テストは成功しました。Windows 10/11実機での画面操作・スリープ復帰などの受け入れ確認は未実施のため、確認用の開発版として配布します。詳しくは [テスト結果](docs/TEST-RESULTS.md) を参照してください。
 
 ## 基本動作
 
@@ -21,11 +21,13 @@ Windows 10 / 11 x64向けの、日本語・ローカル動作の座りっぱな�
 
 ビルド済み配布物を利用する場合:
 
-1. ポータブルzipを任意のフォルダーへ展開します。
+1. 配布ZIPを任意のフォルダーへ展開し、`portable` フォルダーを開きます。
 2. `sit-break.exe` を起動します。LICENSEとNOTICEは同じフォルダーに保持してください。
 3. トレイのSit Breakアイコンから残り時間を確認できます。
 
-NSIS版をビルドした場合は `*-setup.exe` でインストールできます。
+配布ZIPの `installer/Sit-Break-120-5-x64-setup.exe` でインストールすることもできます。GitHub Actionsの元Artifactsでは長い出力フォルダー階層内に配置されています。
+
+[ビルド成功・元Artifacts](https://github.com/aromaoil0312-max/sit-break/actions/runs/36485516520)／[変更PR #1](https://github.com/aromaoil0312-max/sit-break/pull/1)。
 アプリの実行には **Microsoft Edge WebView2 Runtime** が必要です。未導入の場合、Microsoft公式のオフラインインストーラーを別途用意してください。このアプリ・インストーラー自身はダウンロードを開始しません。
 
 ポータブル版の設定保存先はexe横ではなく `%APPDATA%\com.sitbreak.local1205\settings.json` です。

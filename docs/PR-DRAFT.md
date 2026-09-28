@@ -8,7 +8,7 @@ Windowsの稼働時間時計とセッション通知でロック・スリープ�
 日本語設定画面、Rustテスト、Windows exe/NSIS用Actions、ライセンスとビルド手順を含みます。
 
 検証結果・未確認事項は `docs/TEST-RESULTS.md` を参照してください。
-Windows実機の受け入れ確認とexe生成が完了するまではdraft扱いとします。
+Windows runner上15テストとexe/NSIS生成は成功済みです。Windows 10/11実機の受け入れ確認が残るためdraft扱いとします。
 
 推奨PR先: 利用者自身のforkのmain
 ブランチ: feature/120-5-break-timer
