@@ -33,6 +33,11 @@ releaseビルドはこの変数を無視し、未設定時の初期値は必ず1
 featureブランチへのpush、PR、手動実行に対応しています。
 タグのrelease workflowは公開を急がずdraft/pre-releaseを作成します。
 
+このforkの[Actions画面](https://github.com/aromaoil0312-max/sit-break/actions)を開き、ワークフローを有効にする案内が表示された場合は有効化してください。
+続いて「Windows build and tests」→「Run workflow」で `feature/120-5-break-timer` を選択して実行します。
+成功した実行のArtifactsから `sit-break-120-5-windows-x64` をダウンロードします。
+手動実行ボタンが表示されない場合は、有効化後にfeatureブランチへの次のpushで起動できます。
+
 ## Linuxからexeを生成する場合
 
 LLVM（clang-cl / lld-link / llvm-rc）、Rust、cargo-xwinを用意します。cargo-xwinがMicrosoft CRT/SDKを取得するため、開発時のみネット接続が必要です。

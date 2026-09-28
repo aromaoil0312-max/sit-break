@@ -1,6 +1,6 @@
 # テスト結果・残作業
 
-確認日: 2026-09-26（日本時間）
+検証日: 2026-09-26（日本時間）／GitHub反映状況更新: 2026-09-29（日本時間）
 状態: **実装済みの開発版。配布用exe未生成、Windows実機未検証。完成条件は未達。**
 
 ## 実行環境
@@ -72,7 +72,7 @@ Playwright: browser executable unavailable; browser download returned an invalid
 
 ## 完成までに必要な作業
 
-1. 利用者のforkにfeatureブランチをpushし、Windows Actionsで`cargo test`・exe/NSIS生成を実施。
+1. Windows Actionsで`cargo test`・exe/NSIS生成を実施（forkへの反映とPR作成は完了）。
 2. 上表9ケースをWindows 10/11で受け入れ確認。日本語、音、最前面、×、Alt＋F4、ロック・スリープ復帰、設定保存を確認。
 3. 未設定環境で初期値120分／5分、短縮モードが本番で無効、再起動・自動起動と二重起動を確認。
 4. 高DPI・複数モニターで緊急解除ボタンが画面内に収まり、通知終了後に作業へ戻れることを確認。
@@ -80,6 +80,11 @@ Playwright: browser executable unavailable; browser download returned an invalid
 
 ## GitHubの状態
 
-元リポジトリは全履歴をclone済み。ローカルブランチ `feature/120-5-break-timer` に変更をコミットしています。
-接続済みGitHubツールはfork／新規リポジトリ作成に非対応で、ブラウザーも未ログインだったため、forkとPRは未作成です。
-ユーザーの既存の無関係なリポジトリや元リポジトリのmainには書き込んでいません。
+元リポジトリの履歴を保持した利用者のforkへ、アプリ本体と説明書・ビルド設定を2コミットで反映しました。
+- リポジトリ: https://github.com/aromaoil0312-max/sit-break
+- ブランチ: `feature/120-5-break-timer`
+- Draft PR: https://github.com/aromaoil0312-max/sit-break/pull/1
+- GitHub側の2つのtree SHAがローカルコミットと一致することを確認済み。
+
+pushとPR作成後のActions実行一覧は0件でした。接続ツールはワークフロー有効化・手動実行に対応していないため、設定状態は確認できていません。Actions画面でforkのワークフロー有効化が必要か確認してください。手順は[ビルド方法](BUILD.md)に記載しています。
+mainへの直接変更、マージ、リリース公開は行っていません。
