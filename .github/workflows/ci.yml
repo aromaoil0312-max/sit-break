@@ -1,38 +1,42 @@
-name: CI
-
+name: Windows build and tests
 on:
   push:
-    branches: [main]
+    branches: [main, 'feature/**']
   pull_request:
-
+  workflow_dispatch:
+permissions:
+  contents: read
 jobs:
-  check:
-    name: Type-check & compile
+  windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-
       - uses: dtolnay/rust-toolchain@stable
-
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri
-
-      - name: Install frontend dependencies
-        run: npm ci
-
-      - name: Type-check & build frontend (tsc + vite)
-        run: npm run build
-
-      - name: Cargo check
+      - run: npm ci
+      - run: npm run build
+      - name: Rust tests
         working-directory: src-tauri
-        run: cargo check --locked
-
-      - name: Cargo clippy
-        working-directory: src-tauri
-        run: cargo clippy
+        run: cargo test --locked
+      - name: Build Windows x64 portable exe and NSIS installer
+        run: npm run tauri -- build --target x86_64-pc-windows-msvc
+      - name: Include license and instructions
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force artifacts
+          Copy-Item src-tauri/target/x86_64-pc-windows-msvc/release/sit-break.exe artifacts/
+          Copy-Item README.md,LICENSE,NOTICE artifacts/
+          Get-FileHash artifacts/sit-break.exe -Algorithm SHA256 | Format-List | Out-File artifacts/SHA256.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sit-break-120-5-windows-x64
+          path: |
+            artifacts/
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*-setup.exe
+          if-no-files-found: error

@@ -1,7 +1,7 @@
 [package]
 name = "sit-break"
 version = "0.2.2"
-description = "久坐提醒小助手"
+description = "120分作業・5分休憩のWindows常駐タイマー"
 authors = ["fed01"]
 edition = "2021"
 
@@ -17,18 +17,13 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 tauri = { version = "2", features = ["tray-icon"] }
-tauri-plugin-autostart = "2"
 tauri-plugin-single-instance = "2"
-sys-locale = "0.3"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
 [target."cfg(windows)".dependencies]
 winreg = "0.10"
-windows = { version = "0.62", features = [
-    "Win32_System_SystemInformation",
-    "Win32_UI_Input_KeyboardAndMouse",
-] }
+
 
 # Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
 [profile.release]

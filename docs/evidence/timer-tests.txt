@@ -1,0 +1,17 @@
+
+running 12 tests
+test tests::break_has_no_pause_reset_or_settings_bypass ... ok
+test tests::eighty_minutes_then_one_hour_locked_leaves_forty ... ok
+test tests::delayed_worker_never_skips_an_unseen_break ... ok
+test tests::emergency_requires_thirty_seconds_and_confirmation ... ok
+test tests::lock_cancels_emergency_and_preserves_break ... ok
+test tests::long_running_cycles_and_cancel ... ok
+test tests::one_minute_cycle_is_automatic ... ok
+test tests::production_defaults_cycle ... ok
+test tests::pause_resume_preserves_fractional_time ... ok
+test tests::irregular_ticks_do_not_accumulate_drift ... ok
+test tests::reset_resumes_but_sound_only_changes_do_not_reset ... ok
+test tests::sleep_does_not_advance_awake_clock ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

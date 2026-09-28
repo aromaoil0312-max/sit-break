@@ -1,0 +1,10 @@
+Sit Break 120-5
+Based on Sit Break by yuexiaoliang (Copyright (c) 2026 yuexiaoliang).
+Upstream: https://github.com/yuexiaoliang/sit-break
+Base commit: 3274d6760a657d59f0279d66108d3958998a563f (v0.2.2)
+Original LICENSE is preserved unchanged. Changes are distributed under MIT.
+
+This derivative retains Tauri 2, the Rust app entry, tray/window infrastructure,
+Windows autostart registry implementation, Vite/TypeScript pipeline and icons.
+It replaces the reminder/postpone logic with a Japanese automatic 120/5 cycle.
+Git history includes the original project history.
