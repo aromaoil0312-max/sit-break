@@ -1,0 +1,5 @@
+Error: Failed to setup MSVC CRT
+
+Caused by:
+    0: HTTP GET request for https://aka.ms/vs/17/release/channel failed
+    1: io: connection refused

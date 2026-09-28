@@ -1,111 +1,109 @@
-# Sit Break
+# Sit Break 120-5
 
-[![Windows](https://img.shields.io/badge/platform-Windows%2010%2F11-0078d4)](https://github.com/yuexiaoliang/sit-break)
-[![Tauri](https://img.shields.io/badge/built%20with-Tauri%202-FFC131)](https://tauri.app)
-[![Rust](https://img.shields.io/badge/language-Rust-DEA584)](https://www.rust-lang.org)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/yuexiaoliang/sit-break)](../../releases)
-[![CI](https://github.com/yuexiaoliang/sit-break/actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
+Windows 10 / 11 x64向けの、日本語・ローカル動作の座りっぱなし防止タイマーです。
+[yuexiaoliang/sit-break](https://github.com/yuexiaoliang/sit-break) v0.2.2をもとに、用途を絞って改造しています。
 
-**A tiny, beautiful sitting reminder for Windows.** Sit Break lives in your system tray, counts down quietly, and gently pops up a reminder when it is time to stand up and move — because forgetting to take breaks is how backs get ruined.
+> 開発版です。タイマー単体の自動テスト、フロントエンドのビルド、Windows向けRust型チェックは通過していますが、Windows実機での受け入れ確認は未実施です。今回の環境ではMicrosoft CRT/SDKの取得に失敗したため、実行用exeは未生成です。詳しくは [テスト結果](docs/TEST-RESULTS.md) を参照してください。
 
-[English](README.md) | [简体中文](README.zh-CN.md)
+## 基本動作
 
-<!-- Keywords: sedentary reminder, sitting reminder, break reminder, stand up reminder, desk break, floating countdown timer, system tray app, 久坐提醒, Windows 11, Tauri, Rust -->
+起動 → 120分作業 → 5分休憩 → 自動で次の120分 → 繰り返し。
 
-## Screenshots
+- 起動直後から作業時間を計測。通常はトレイに常駐します。
+- 休憩開始時は中央に680×540の最前面ウィンドウを表示し、通知音を1回鳴らします。
+- 休憩時間は自動で減り、終了すると「休憩終了」を3秒表示して次の作業時間に戻ります。
+- 延期・スキップ・手動の休憩開始はありません。
+- 緊急解除は「緊急解除」→30秒待機→「解除する」の2段階。解除後は作業時間を最初から開始します。
+- 休憩中のAlt＋F4、一時停止、リセット、設定変更では休憩を解除できません。
+- トレイの「終了」は休憩中でも利用できます。OSのタスク終了を妨げるアプリではありません。
 
-<p align="center">
-  <img src="docs/screenshots/widget.png" alt="Floating countdown ball" width="140" />
-</p>
+## インストールと起動
 
-<table>
-  <tr>
-    <td align="center"><img src="docs/screenshots/panel.png" alt="Tray panel" width="272" /></td>
-    <td align="center"><img src="docs/screenshots/settings.png" alt="Settings window" width="320" /></td>
-  </tr>
-  <tr>
-    <td align="center">Tray panel</td>
-    <td align="center">Settings</td>
-  </tr>
-  <tr>
-    <td align="center"><img src="docs/screenshots/reminder.png" alt="Break reminder" width="380" /></td>
-    <td align="center"><img src="docs/screenshots/break.png" alt="Break countdown" width="380" /></td>
-  </tr>
-  <tr>
-    <td align="center">Break reminder</td>
-    <td align="center">Break countdown</td>
-  </tr>
-</table>
+ビルド済み配布物を利用する場合:
 
-## Why Sit Break
+1. ポータブルzipを任意のフォルダーへ展開します。
+2. `sit-break.exe` を起動します。LICENSEとNOTICEは同じフォルダーに保持してください。
+3. トレイのSit Breakアイコンから残り時間を確認できます。
 
-- **Tiny** — a 4 MB standalone executable; when idle it runs with **zero windows and zero webviews**, just a tray icon and a floating timer ball
-- **Beautiful** — glassmorphism floating ball with a live seconds countdown, gradient progress ring, and a glowing dot that travels the ring
-- **Smart** — system-wide idle detection: walk away for a coffee and the timer resets, so being away never counts as "sitting"
-- **Bilingual** — Chinese & English UI, follows your system language or can be set manually
+NSIS版をビルドした場合は `*-setup.exe` でインストールできます。
+アプリの実行には **Microsoft Edge WebView2 Runtime** が必要です。未導入の場合、Microsoft公式のオフラインインストーラーを別途用意してください。このアプリ・インストーラー自身はダウンロードを開始しません。
 
-## Features
+ポータブル版の設定保存先はexe横ではなく `%APPDATA%\com.sitbreak.local1205\settings.json` です。
+旧Sit Breakの設定や自動起動登録と混ざらないよう、アプリ識別子・登録名を分けています。
+旧版が起動中なら終了し、必要に応じて旧版の自動起動をOFFにしてください。
 
-| | |
+## トレイ操作
+
+左クリックで状態を表示。右クリックで次のメニューを表示します。
+
+| 操作 | 動作 |
 |---|---|
-| ⏱ Floating countdown ball | Always-on-top, draggable, scroll-wheel resize (40–140 px), position remembered |
-| 🔔 Break reminder popup | Glassmorphism card in the corner with a random stretch tip and a snooze option |
-| 🧘 Break countdown | Circular progress ring, auto-resumes work timer when the break ends |
-| ↻ One-click reset | Reset the countdown anytime from the tray panel or floating ball menu |
-| 💤 Idle detection | Away for your break length (no keyboard/mouse) → timer resets automatically; can be turned off |
-| 🚀 Launch at startup | Optional, one toggle in settings |
-| 🔔 Sound cue | Gentle two-tone chime when a reminder pops up (optional) |
-| ✏️ Custom tips | Write your own reminder tips, one per line, shown at random |
-| 🌐 中文 / English | Follows system language, or pick one in settings |
+| 状態を表示 | 残り時間を表示。休憩中は休憩画面を表示 |
+| 一時停止 / 再開 | 作業時間のみ停止・再開 |
+| タイマーを最初から開始 | 設定された作業時間から再開。一時停止も解除 |
+| 設定 | 作業・休憩時間、通知音、自動起動を変更 |
+| 終了 | 確認なしで完全終了 |
 
-## Download
+通常画面・設定画面の×は、アプリを終了せず画面だけ閉じます。
 
-Grab the latest installer or portable exe from [Releases](../../releases):
+## 設定
 
-- `Sit Break_x.y.z_x64-setup.exe` — NSIS installer
-- `Sit Break_x.y.z_x64_en-US.msi` — MSI installer
-- `sit-break.exe` — portable, no installation needed
+| 項目 | 初期値 | 範囲 |
+|---|---|---|
+| 作業時間 | 120分 | 1〜1440分、整数 |
+| 休憩時間 | 5分 | 1〜180分、整数 |
+| 通知音 | ON | ON / OFF |
+| Windows自動起動 | OFF | ON / OFF |
 
-> Requires Windows 10/11 with WebView2 (pre-installed on Windows 11).
+作業時間を変更すると新しい時間で計り直します。音・自動起動だけの変更では時間をリセットしません。
+休憩中は設定画面・設定保存を利用できません。設定の保存失敗は画面に表示します。
+終了・PC再起動後は、保存した作業時間の最初から開始します。途中の残り時間は復元しません。
+ポータブルexeを移動した場合、自動起動を一度OFF→ONにして登録先を更新してください。
 
-## Build from Source
+## ロック・スリープ
 
-Prerequisites: [Node.js 18+](https://nodejs.org), [Rust](https://rustup.rs), and on Windows the [MSVC build tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) + WebView2.
+- スリープ・休止はWindowsの `QueryUnbiasedInterruptTime` で計測時間から除きます。
+- ロック・セッション切断はWindows通知と入力デスクトップ／セッション状態の照合で停止します。
+- 復帰後は残り時間を維持して再開します。手動一時停止中なら停止を維持します。
+- **休憩時間もロック・スリープ中は停止**します。復帰時に残りの休憩を表示します。
+- ロックすると緊急解除の確認待ちは取り消します。
+- キーボード・マウス無操作によるアイドルリセットは削除しました。動画視聴・読書中も計測します。
+- PCの時計変更や通常のイベント処理遅延で秒数が蓄積してズレない設計です。大きな処理遅延が発生した場合、未表示の休憩を済んだものとして扱わず、表示開始時から丸ごと休憩します。
 
-```bash
-npm install
-npm run tauri dev    # run in development
-npm run tauri build  # produce exe + installers in src-tauri/target/release
+## ビルド
+
+詳細は [docs/BUILD.md](docs/BUILD.md)。WindowsにNode.js 22.12以降、Rust stable MSVC、Visual Studio C++ Build ToolsとWindows SDKを用意し、実行します。
+
+```powershell
+npm ci
+npm run build
+cargo test --manifest-path src-tauri/Cargo.toml --locked
+npm run tauri -- build --target x86_64-pc-windows-msvc
 ```
 
-## How It Works
+GitHub Actionsも用意しています。featureブランチへのpushまたは手動実行により、Windows上でexeとNSISインストーラーをビルドしてArtifactsに保存します。
 
-```
-Work timer ──0──▶ Reminder popup ──Take a break──▶ Break countdown ──done──▶ Fresh timer
-    ▲                                                                    │
-    └────────────── Reset anytime (tray panel / floating ball) ◀─────────┘
-```
+### 短縮テストモード
 
-- The timer, tray, idle detection and window management all live in **Rust** — no background webviews, no timer throttling, minimal memory
-- The floating ball, reminder popup and settings window are pure UI, created on demand
-
-## Tech Stack
-
-[Tauri 2](https://tauri.app) · Rust · TypeScript · Vite — no UI framework, hand-rolled CSS.
-
-## CI & Releases
-
-- **CI**（`.github/workflows/ci.yml`）：type-check + frontend build (`tsc + vite`), `cargo check` and `cargo clippy` on every push / PR
-- **Release**（`.github/workflows/release.yml`）：pushing a `v*` tag builds and publishes the NSIS installer, MSI installer and portable exe to GitHub Releases
-
-Cut a release with one command (bumps all three version files, updates Cargo.lock, commits, tags and pushes):
-
-```bash
-npm run release -- patch   # or minor / major / an explicit version like 1.2.3
-# dry-run without touching files: npm run release -- patch --dry-run
+```powershell
+$env:SIT_BREAK_TEST_MODE = "1"
+npm run tauri -- dev
 ```
 
-## License
+開発ビルドのみ60秒作業／30秒休憩になります。本番ビルドでは無効です。
+30秒の緊急解除テストには、短縮モードを解除して設定を1分／1分にしてください。
 
-[MIT](LICENSE)
+## 構成とプライバシー
+
+Tauri 2 / Rust / TypeScript / Vite。UIフレームワークは使っていません。
+Rustがタイマー・解除条件・トレイ・設定保存を管理し、TypeScriptは表示と操作の送信だけを担当します。
+通信処理、アナリティクス、広告、アカウント、クラウド同期、自動更新は実装していません。
+依存関係の取得など**開発時**はネット接続が必要です。WindowsやWebView2自体の更新機能はこのアプリの管理対象外です。
+
+## クレジット・ライセンス
+
+元プロジェクト: [Sit Break / yuexiaoliang](https://github.com/yuexiaoliang/sit-break)
+
+ベース: `3274d6760a657d59f0279d66108d3958998a563f`（v0.2.2）。元のGit履歴・アイコン・MIT LICENSEを保持しています。
+Windows自動起動の引用符付きレジストリ登録、Tauriのトレイ／ウィンドウ構成とビルド基盤を再利用しました。
+派生版の変更点は [docs/CHANGES.md](docs/CHANGES.md)。MITライセンス全文は [LICENSE](LICENSE)、出典表示は [NOTICE](NOTICE) にあります。
